@@ -65,9 +65,12 @@ describe "MongoDB" do
     @shipments.find_one(:num => 1).class == Mongo::ObjectID
   end
 
-  # it "queries by internal property" do
-  #   ship = @shipments.find({"package" => {"$elemMatch" => {"tracking_number" => "tracking"}}}).first
-  #   ship["_id"].class.should == Mongo::ObjectID
-  #   ship["package"].first["tracking_number"].should == "tracking"
-  # end
+  it "for a shipment number list it's tracking numbers" do
+    ship = @shipments.find({"num" => 1}).first
+    tracking = ship["package"].map do |package|
+      package["tracking_number"]
+    end
+    tracking.member? "tracking1"
+    tracking.member? "tracking2"
+  end
 end
