@@ -73,4 +73,9 @@ describe "MongoDB" do
     tracking.member? "tracking1"
     tracking.member? "tracking2"
   end
+  
+  it "for a tracking number, find it's shipment" do
+    ship = @shipments.find({"package" => {"$elemMatch" => {"tracking_number" => "tracking1"}}}).first
+    ship["num"].should == 1
+  end
 end
