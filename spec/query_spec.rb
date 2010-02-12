@@ -75,7 +75,7 @@ describe "MongoDB" do
   end
   
   it "for a tracking number, find it's shipment" do
-    ship = @shipments.find({"package" => {"$elemMatch" => {"tracking_number" => "tracking1"}}}).first
+    ship = @shipments.find({"package.tracking_number" => "tracking1"}).first
     ship["num"].should == 1
   end
   

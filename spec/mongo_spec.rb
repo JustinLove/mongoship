@@ -63,7 +63,7 @@ describe "MongoDB" do
   end
 
   it "queries by internal property" do
-    ship = @shipments.find({"package" => {"$elemMatch" => {"tracking_number" => "tracking"}}}).first
+    ship = @shipments.find({"package.tracking_number" => "tracking"}).first
     ship["_id"].class.should == Mongo::ObjectID
     ship["package"].first["tracking_number"].should == "tracking"
   end
