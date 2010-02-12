@@ -78,4 +78,19 @@ describe "MongoDB" do
     ship = @shipments.find({"package" => {"$elemMatch" => {"tracking_number" => "tracking1"}}}).first
     ship["num"].should == 1
   end
+  
+  context "for a shipment number, list data for customs declaration" do
+    it "for each package, its number and list of package lines" do
+      ship = @shipments.find({"num" => 1}).first
+      packages = []
+      ship["package"].each_with_index do |package,i|
+        packages << {
+          :number => i + 1,
+          :items => package["pkg_lines"]
+        }
+      end
+      packages.first[:number].should == 1
+      packages.first[:items].first["item_id"].should == 1
+    end
+  end
 end
