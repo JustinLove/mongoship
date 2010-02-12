@@ -79,18 +79,30 @@ describe "MongoDB" do
     ship["num"].should == 1
   end
   
-  context "for a shipment number, list data for customs declaration" do
-    it "for each package, its number and list of package lines" do
-      ship = @shipments.find({"num" => 1}).first
-      packages = []
-      ship["package"].each_with_index do |package,i|
-        packages << {
-          :number => i + 1,
-          :items => package["pkg_lines"]
+  it "for a shipment number, list data for customs declaration" do
+    ship = @shipments.find({"num" => 1}).first
+    values = {}
+    ship["shipping_lines"].each do |line|
+      values[line["item_id"]] = line["price"]
+    end
+    packages = []
+    ship["package"].each_with_index do |package,i|
+      lines = package["pkg_lines"].map do |line|
+        {
+          :item_code => line["item_id"],
+          :qty => line["qty"],
+          :value => line["qty"] * values[line["item_id"]]
         }
       end
-      packages.first[:number].should == 1
-      packages.first[:items].first["item_id"].should == 1
+      packages << {
+        :number => i + 1,
+        :items => lines
+      }
     end
+    packages.first[:number].should == 1
+    x = packages.first[:items][1]
+    x[:item_code].should == 2
+    x[:qty].should == 2
+    x[:value].should == 200
   end
 end
